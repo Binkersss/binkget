@@ -69,15 +69,18 @@ pub async fn download(target: &str, quiet_mode: bool) -> Result<(), Box<dyn std:
 
         let fname = url.path_segments()
             .and_then(|segments| segments.last())
-            .unwrap_or("download.bin");
-
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| "download.bin".to_string());
+        
         if !quiet_mode {
-            println!("Saving to: {}", style(fname).green());
+            println!("Saving to: {}", style(&fname).green());
         }
 
+        let fname_clone = fname.clone();
         let mut file = File::create(fname).await?;
-        let bar = create_progress_bar(quiet_mode, fname, ct_len);
-
+        let bar = create_progress_bar(quiet_mode, &fname_clone, ct_len);
+        
+        
         let mut stream = resp.bytes_stream();
         while let Some(chunk) = stream.next().await {
             let chunk = chunk?;

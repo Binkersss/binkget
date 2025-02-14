@@ -2,6 +2,7 @@ extern crate clap;
 use binkget::download;
 
 use clap::{Arg, App};
+use tokio::runtime::Builder;
 
 fn main() {
     let matches = App::new("Binkget")
@@ -17,8 +18,14 @@ fn main() {
     let url = matches.value_of("URL").unwrap();
     println!("URL: {}", url);
 
-    let quiet_mode = true;
+    let quiet_mode = false;
 
-    let _file = download(url, quiet_mode);
-    
+    let rt = Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    if let Err(e) = rt.block_on(download(url, quiet_mode)) {
+        eprintln!("Download failed: {}", e);
+    }
+
 }
