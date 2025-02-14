@@ -1,9 +1,9 @@
 extern crate clap;
+use binkget::download;
 
 use clap::{Arg, App};
 
 fn main() {
-    
     let matches = App::new("Binkget")
         .version("0.1.0")
         .author("Nathaniel Chappelle <nathaniel.chappelle@proton.me>")
@@ -16,4 +16,9 @@ fn main() {
         .get_matches();
     let url = matches.value_of("URL").unwrap();
     println!("URL: {}", url);
+
+    let quiet_mode = true;
+
+    let _file = download(url, quiet_mode);
+    
 }

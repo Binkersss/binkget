@@ -5,3 +5,10 @@ edition = "2021"
 
 [dependencies]
 clap = "2.26.0"
+indicatif = "0.17.11"
+reqwest = { version = "0.12.12", features = ["stream"] }
+url = "2.5.4"
+console = "0.15.10"
+headers = "0.4.0"
+tokio = "1.43.0"
+futures-util = "0.3.31"
