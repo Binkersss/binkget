@@ -6,7 +6,7 @@ use url::Url;
 use console::style;
 use futures_util::StreamExt; // For async streaming
 
-pub fn create_progress_bar(quiet_mode: bool, msg: &str, length: Option<u64>) -> ProgressBar {
+fn create_progress_bar(quiet_mode: bool, msg: &str, length: Option<u64>) -> ProgressBar {
     let bar = if quiet_mode {
         ProgressBar::hidden()
     } else {
