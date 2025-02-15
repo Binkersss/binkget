@@ -14,9 +14,16 @@ fn main() {
                  .takes_value(true)
                  .index(1)
                  .help("url to download"))
+        .arg(Arg::with_name("FILENAME")
+                .required(true)
+                .takes_value(true)
+                .index(2)
+                .help("target file name"))
         .get_matches();
     let url = matches.value_of("URL").unwrap();
     println!("URL: {}", url);
+    let fname = matches.value_of("FILENAME").unwrap();
+    println!("File name: {}", fname);
 
     let quiet_mode = false;
 
@@ -24,7 +31,7 @@ fn main() {
         .enable_all()
         .build()
         .unwrap();
-    if let Err(e) = rt.block_on(download(url, quiet_mode)) {
+    if let Err(e) = rt.block_on(download(url, quiet_mode, fname)) {
         eprintln!("Download failed: {}", e);
     }
 

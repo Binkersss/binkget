@@ -1,4 +1,4 @@
-use indicatif::{HumanBytes, ProgressBar, ProgressStyle};
+use indicatif::{HumanBytes, ProgressBar, ProgressStyle, ProgressDrawTarget};
 use reqwest::Client;
 use tokio::io::AsyncWriteExt;
 use tokio::fs::File;
@@ -17,6 +17,7 @@ fn create_progress_bar(quiet_mode: bool, msg: &str, length: Option<u64>) -> Prog
     };
 
     bar.set_message(msg.to_string());
+    bar.set_draw_target(ProgressDrawTarget::stderr_with_hz(10)); // Ensure it updates in place
     if length.is_some() {
         bar.set_style(
             ProgressStyle::default_bar()
@@ -31,7 +32,7 @@ fn create_progress_bar(quiet_mode: bool, msg: &str, length: Option<u64>) -> Prog
     bar
 }
 
-pub async fn download(target: &str, quiet_mode: bool) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn download(target: &str, quiet_mode: bool, fname: &str) -> Result<(), Box<dyn std::error::Error>> {
     let url = Url::parse(target)?;
     let client = Client::new();
     let resp = client.get(url.clone()).send().await?; // Await here
@@ -66,19 +67,13 @@ pub async fn download(target: &str, quiet_mode: bool) -> Result<(), Box<dyn std:
             }
             println!("Type: {}", style(ct_type).green());
         }
-
-        let fname = url.path_segments()
-            .and_then(|segments| segments.last())
-            .map(|s| s.to_string())
-            .unwrap_or_else(|| "download.bin".to_string());
         
         if !quiet_mode {
             println!("Saving to: {}", style(&fname).green());
         }
 
-        let fname_clone = fname.clone();
         let mut file = File::create(fname).await?;
-        let bar = create_progress_bar(quiet_mode, &fname_clone, ct_len);
+        let bar = create_progress_bar(quiet_mode, &fname, ct_len);
         
         
         let mut stream = resp.bytes_stream();
