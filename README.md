@@ -83,7 +83,7 @@ Binkget relies on the following Rust crates:
 Contributions are welcome! If you find a bug or have a feature request, please open an issue or submit a pull request.
 
 ## License
-Binkget is released under the MIT License.
+Binkget is released under the APACHE 2.0 License.
 
 ## Contact
 Author: Nathaniel Chappelle  
