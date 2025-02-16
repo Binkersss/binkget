@@ -1,5 +1,5 @@
 extern crate clap;
-use binkget::download;
+use binkget::parallel_download;
 
 use clap::{Arg, App};
 use tokio::runtime::Builder;
@@ -25,13 +25,13 @@ fn main() {
     let fname = matches.value_of("FILENAME").unwrap();
     println!("File name: {}", fname);
 
+    let num_connections = 4;
     let quiet_mode = false;
-
     let rt = Builder::new_current_thread()
         .enable_all()
         .build()
         .unwrap();
-    if let Err(e) = rt.block_on(download(url, quiet_mode, fname)) {
+    if let Err(e) = rt.block_on(parallel_download(url, fname, num_connections, quiet_mode)) {
         eprintln!("Download failed: {}", e);
     }
 
